@@ -30,3 +30,7 @@ let cars = [
     }
 ]
 export default cars;
+export const updateCars = (newCars:any) => {
+    cars.length = 0; // Clear the array while keeping the reference
+    cars.push(...newCars); // Add new elements
+};

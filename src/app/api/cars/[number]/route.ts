@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import cars from '@/data/data'
+import cars, {updateCars} from '@/data/data'
 
 export async function PUT(request: Request, { params }: { params: Promise<{ number: string }> }) {
     const body = await request.json();
@@ -20,7 +20,10 @@ export async function PUT(request: Request, { params }: { params: Promise<{ numb
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ number: string }> }) {
     const { number } = await params;
-    cars.filter(car => car.number === number);
+
+    // Reassign the filtered array back to `cars`
+    updateCars(cars.filter(car => car.number !== number))
+
     return new NextResponse(
         "Document deleted",
         { status: 200 }

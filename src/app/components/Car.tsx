@@ -1,3 +1,4 @@
+"use client"
 import React, { useState } from 'react'
 import { useQueryClient, useQuery, useMutation } from '@tanstack/react-query';
 import { deleteCar, putCar } from '@/services/cars'
@@ -17,11 +18,12 @@ const Car: React.FC<carProps> = ({ car, handleDelete, handleUpdate }) => {
                 <input type="text" placeholder={car.number} defaultValue={car.number} />
                 <input type="text" placeholder={car.year} defaultValue={car.year} />
                 <input type="text" placeholder={car.company} defaultValue={car.company} />
-                <button type="submit">Add Car</button>
+                <button type="submit">Update</button>
             </form>
         );
     }
-    const onUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
+    async function onUpdate (e: any) {
+        setUpdating(false)
         e.preventDefault();
         const form = e.target as HTMLFormElement;
         const newCar = {
@@ -33,7 +35,6 @@ const Car: React.FC<carProps> = ({ car, handleDelete, handleUpdate }) => {
         }
         handleUpdate(car.number,newCar);
     };
-
     return (
         <>
             {<div>
@@ -43,7 +44,7 @@ const Car: React.FC<carProps> = ({ car, handleDelete, handleUpdate }) => {
                 <p>{car.color}</p>
                 <p>{car.year}</p>
                 <button onClick={() => handleDelete(car.number)}>delete</button>
-                <button onClick={() => handleUpdate(car.number, car)}>edit</button>
+                <button onClick={()=>setUpdating(true)}>edit</button>
             </div>}
             {updating && form()}
         </>

@@ -1,9 +1,9 @@
 "use client"
-import React , {useState} from 'react'
+import React, { useState } from 'react'
 import { useQueryClient, useQuery, useMutation } from '@tanstack/react-query';
 import Car from '../components/Car'
-import { getCars, postCar,deleteCar,putCar } from '@/services/cars'
-
+import { getCars, postCar, deleteCar, putCar } from '@/services/cars'
+import './style.css'
 
 const Cars = () => {
     const [isMutating, setIsMutating] = useState(false);
@@ -29,10 +29,10 @@ const Cars = () => {
             setIsMutating(true);
             await queryClient.cancelQueries({ queryKey: ['cars'] })
             const previousCars = queryClient.getQueryData(['cars'])
-            queryClient.setQueryData(['cars'], (old: any) => old.filter((car: any) => car._id !== id))
+            queryClient.setQueryData(['cars'], (old: any) => old.filter((car: any) => car.number !== id))
             return { previousCars }
         },
-        onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['cars'] }); setIsMutating(false)},
+        onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['cars'] }); setIsMutating(false) },
     })
 
     const updateCarMutation = useMutation({
@@ -49,25 +49,25 @@ const Cars = () => {
             setIsMutating(false)
         },
     })
-    function handleDelete(number: string){
+    function handleDelete(number: string) {
         deleteMutation.mutate(number)
     }
-    function handleUpdate(number: string, car: any){
-        updateCarMutation.mutate({id: number, car })
+    function handleUpdate(number: string, car: any) {
+        updateCarMutation.mutate({ id: number, car })
     }
     const form = () => {
         return (
             <form onSubmit={handleAddCar}>
-                <input type="text" placeholder={data.model} defaultValue={data.model} />
-                <input type="text" placeholder={data.color} defaultValue={data.color} />
-                <input type="text" placeholder={data.number} defaultValue={data.number} />
-                <input type="text" placeholder={data.year} defaultValue={data.year} />
-                <input type="text" placeholder={data.company} defaultValue={data.company} />
+                <input type="text" placeholder='model' defaultValue={data.model} required/>
+                <input type="text" placeholder='color' defaultValue={data.color} required/>
+                <input type="text" placeholder='number' defaultValue={data.number} required />
+                <input type="text" placeholder='year' defaultValue={data.year} required />
+                <input type="text" placeholder='company' defaultValue={data.company} required />
                 <button type="submit">Add Car</button>
             </form>
         );
     }
-    
+
     const handleAddCar = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const form = e.target as HTMLFormElement;
@@ -76,7 +76,7 @@ const Cars = () => {
             color: (form[1] as HTMLInputElement).value,
             number: (form[2] as HTMLInputElement).value,
             year: (form[3] as HTMLInputElement).value,
-            company : (form[4] as HTMLInputElement).value
+            company: (form[4] as HTMLInputElement).value
         }
         createMutation.mutate(car);
     };
@@ -84,9 +84,11 @@ const Cars = () => {
     return (
         <div>
             {(isLoading || isFetching || isMutating) && <p>Loading...</p>}
-            {data?.map((car: any) =>
-                <Car car={car} handleUpdate={handleUpdate} handleDelete={handleDelete}/>
-            )}
+            <div className='cars_container'>
+                {data?.map((car: any) =>
+                    <Car key={car.number} car={car} handleUpdate={handleUpdate} handleDelete={handleDelete} />
+                )}
+            </div>
             {data && form()}
         </div>
     )
